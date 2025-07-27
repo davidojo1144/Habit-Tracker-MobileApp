@@ -1,5 +1,9 @@
 import { createContext } from "react";
 
+type AuthContextType = {
+    
+}
+
 const AuthContext = createContext(undefined)
 
 export function AuthProvider({children}: {children: React.ReactNode}){
@@ -7,5 +11,5 @@ export function AuthProvider({children}: {children: React.ReactNode}){
 }
 
 export function useAuth() {
-    
+
 }
