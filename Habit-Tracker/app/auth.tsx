@@ -2,7 +2,8 @@ import { useState } from "react";
 import { 
     KeyboardAvoidingView, 
     Platform, 
-    View 
+    View,
+    StyleSheet
 } from "react-native";
 
 import {Text, TextInput, Button} from "react-native-paper"
@@ -44,3 +45,15 @@ export default function AuthScreen () {
         </KeyboardAvoidingView>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#f5f5f5"
+    },
+    content: {
+        flex: 1,
+        padding: 16,
+    }
+})
+
