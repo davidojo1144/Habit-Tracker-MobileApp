@@ -15,9 +15,12 @@ export default function AuthScreen () {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
+    const [error, setError] = useState<string | null>("")
 
     const handleAuth = async () => {
-        
+        if(!email && !password){
+
+        }
     }
 
 
@@ -39,6 +42,7 @@ export default function AuthScreen () {
                 keyboardType="email-address"
                 placeholder="Enter email"
                 mode="outlined"
+                onChangeText={setEmail}
                 />
 
                 <TextInput 
@@ -47,6 +51,7 @@ export default function AuthScreen () {
                 keyboardType="email-address"
                 placeholder="Enter pasword"
                 mode="outlined"
+                onChangeText={setPassword}
                 />
 
                 <Button onPress={handleAuth} style={styles.button} mode="contained">{ isSignUp ? "Sign Up" : "Sign In"}</Button>
