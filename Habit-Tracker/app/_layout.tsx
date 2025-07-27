@@ -1,5 +1,9 @@
 import { Stack } from "expo-router";
 
+function RouteGuard (){
+  
+}
+
 export default function RootLayout() {
   return (
     <Stack>
