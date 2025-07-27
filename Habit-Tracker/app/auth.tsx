@@ -10,13 +10,16 @@ import {Text, TextInput, Button} from "react-native-paper"
 
 export default function AuthScreen () {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const handleSwitchMode = () => {
+        setIsSignUp((prev) => (!prev))
+    }
 
     return (
         <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View>
-                <Text>Create account</Text>
+                <Text>{ isSignUp ? "Create account" : "Welcome back"}</Text>
 
                 <TextInput 
                 label="Email"
@@ -34,9 +37,9 @@ export default function AuthScreen () {
                 mode="outlined"
                 />
 
-                <Button mode="contained">Sign Up</Button>
+                <Button mode="contained">{ isSignUp ? "Sign Up" : "Sign In"}</Button>
 
-                <Button mode="text">Already have an account ? Sign In</Button>
+                <Button mode="text" onPress={handleSwitchMode}>{isSignUp ? "Already have an account ? Sign In" : "Dont't have an account ? Sign up"}</Button>
             </View>
         </KeyboardAvoidingView>
     )
