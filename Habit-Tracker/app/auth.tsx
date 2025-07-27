@@ -4,7 +4,7 @@ import {
     View 
 } from "react-native";
 
-import {Text, TextInput} from "react-native-paper"
+import {Text, TextInput, Button} from "react-native-paper"
 
 
 export default function AuthScreen () {
@@ -20,7 +20,20 @@ export default function AuthScreen () {
                 autoCapitalize="none"
                 keyboardType="email-address"
                 placeholder="Enter email"
+                mode="outlined"
                 />
+
+                <TextInput 
+                label="Password"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="Enter pasword"
+                mode="outlined"
+                />
+
+                <Button mode="contained">Sign Up</Button>
+
+                <Button mode="text">Already have an account ?</Button>
             </View>
         </KeyboardAvoidingView>
     )
