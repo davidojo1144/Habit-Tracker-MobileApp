@@ -7,6 +7,8 @@ import {
 } from "react-native";
 
 import {Text, TextInput, Button} from "react-native-paper"
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { RFValue } from "react-native-responsive-fontsize";
 
 
 export default function AuthScreen () {
@@ -17,9 +19,10 @@ export default function AuthScreen () {
 
     return (
         <KeyboardAvoidingView
+        style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View>
+            <View style={styles.content}>
                 <Text>{ isSignUp ? "Create account" : "Welcome back"}</Text>
 
                 <TextInput 
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 16,
+        padding: wp(5)
     }
 })
 
