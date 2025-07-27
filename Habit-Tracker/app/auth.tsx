@@ -13,6 +13,14 @@ import { RFValue } from "react-native-responsive-fontsize";
 
 export default function AuthScreen () {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
+
+    const handleAuth = async () => {
+        
+    }
+
+
     const handleSwitchMode = () => {
         setIsSignUp((prev) => (!prev))
     }
@@ -23,7 +31,7 @@ export default function AuthScreen () {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View style={styles.content}>
-                <Text>{ isSignUp ? "Create account" : "Welcome back"}</Text>
+                <Text style={styles.title}>{ isSignUp ? "Create account" : "Welcome back"}</Text>
 
                 <TextInput 
                 label="Email"
@@ -41,9 +49,9 @@ export default function AuthScreen () {
                 mode="outlined"
                 />
 
-                <Button mode="contained">{ isSignUp ? "Sign Up" : "Sign In"}</Button>
+                <Button onPress={handleAuth} style={styles.button} mode="contained">{ isSignUp ? "Sign Up" : "Sign In"}</Button>
 
-                <Button mode="text" onPress={handleSwitchMode}>{isSignUp ? "Already have an account ? Sign In" : "Dont't have an account ? Sign up"}</Button>
+                <Button style={styles.button2} mode="text" onPress={handleSwitchMode}>{isSignUp ? "Already have an account ? Sign In" : "Dont't have an account ? Sign up"}</Button>
             </View>
         </KeyboardAvoidingView>
     )
@@ -56,7 +64,20 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: wp(5)
-    }
+        padding: wp(5),
+        justifyContent: "center"
+    },
+    title: {
+        textAlign: "center",
+        paddingBottom: hp(2),
+        fontSize: RFValue(30)
+    },
+    button: {
+        marginTop: hp(2),
+        padding: wp(1.5)
+    },
+    button2: {
+        marginTop: hp(1),
+    },
 })
 
