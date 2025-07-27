@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { 
     KeyboardAvoidingView, 
     Platform, 
@@ -8,6 +9,8 @@ import {Text, TextInput, Button} from "react-native-paper"
 
 
 export default function AuthScreen () {
+    const [isSignUp, setIsSignUp] = useState<boolean>(false)
+
     return (
         <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -33,7 +36,7 @@ export default function AuthScreen () {
 
                 <Button mode="contained">Sign Up</Button>
 
-                <Button mode="text">Already have an account ?</Button>
+                <Button mode="text">Already have an account ? Sign In</Button>
             </View>
         </KeyboardAvoidingView>
     )
