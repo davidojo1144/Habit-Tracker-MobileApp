@@ -6,7 +6,7 @@ import {
     StyleSheet
 } from "react-native";
 
-import {Text, TextInput, Button} from "react-native-paper"
+import {Text, TextInput, Button, useTheme} from "react-native-paper"
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
 
@@ -17,9 +17,11 @@ export default function AuthScreen () {
     const [password, setPassword] = useState<string>("")
     const [error, setError] = useState<string | null>("")
 
-    const handleAuth = async () => {
-        if(!email && !password){
+    const theme = useTheme()
 
+    const handleAuth = async () => {
+        if(!email || !password){
+            setError("Please fill in all field")
         }
     }
 
@@ -54,6 +56,8 @@ export default function AuthScreen () {
                 onChangeText={setPassword}
                 />
 
+                { error && <Text style={{color: theme.colors.error, paddingTop : hp(2), fontSize: RFValue(12)}}>{error}</Text>}
+
                 <Button onPress={handleAuth} style={styles.button} mode="contained">{ isSignUp ? "Sign Up" : "Sign In"}</Button>
 
                 <Button style={styles.button2} mode="text" onPress={handleSwitchMode}>{isSignUp ? "Already have an account ? Sign In" : "Dont't have an account ? Sign up"}</Button>
@@ -85,4 +89,3 @@ const styles = StyleSheet.create({
         marginTop: hp(1),
     },
 })
-
