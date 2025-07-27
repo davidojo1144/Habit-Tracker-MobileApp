@@ -1,4 +1,10 @@
-import { KeyboardAvoidingView, Platform, View } from "react-native";
+import { 
+    KeyboardAvoidingView, 
+    Platform, 
+    View 
+} from "react-native";
+
+import {Text, TextInput} from "react-native-paper"
 
 
 export default function AuthScreen () {
@@ -7,7 +13,14 @@ export default function AuthScreen () {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View>
-                
+                <Text>Create account</Text>
+
+                <TextInput 
+                label="Email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="Enter email"
+                />
             </View>
         </KeyboardAvoidingView>
     )
