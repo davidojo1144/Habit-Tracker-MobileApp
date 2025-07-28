@@ -8,13 +8,16 @@ function RouteGuard({ children }: { children: React.ReactNode }) {
   const segments = useSegments()
 
   useEffect(() => {
+    const timer = setTimeout(() => {
       const inAuthGroup = segments[0] === "auth"
       if (!user && !inAuthGroup) {
         router.replace("/auth");
       } else if (user && inAuthGroup) {
         router.replace("/")
       }
-}, [user, segments]);
+    }, 0);
+
+  }, [user, segments]);
 
   return <>{children}</>;
 }

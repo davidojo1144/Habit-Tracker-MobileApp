@@ -5,6 +5,7 @@ import { account } from "./appwrite";
 
 type AuthContextType = {
     user: Models.User<Models.Preferences> | null
+    isLoadingUser: boolean
     signUp: (email: string, password: string) => Promise<string | null>
     signIn: (email: string, password: string) => Promise<string | null>
 }
@@ -13,6 +14,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({children}: {children: React.ReactNode}){
     const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null)
+
+
+    const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true)
 
     useEffect(() => {
         getUser()
@@ -24,6 +28,8 @@ export function AuthProvider({children}: {children: React.ReactNode}){
             setUser(session)
         } catch (error) {
             setUser(null)
+        } finally{
+            setIsLoadingUser(false)
         }
     }
 
