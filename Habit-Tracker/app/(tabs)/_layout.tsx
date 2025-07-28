@@ -28,7 +28,7 @@ export default function TabsLayout() {
         tabBarIcon: ({color, size}) =>   <MaterialCommunityIcons name="chart-line" size={size} color={color} />}}
         />
         <Tabs.Screen 
-        name="add-habit" 
+        name="addhabit" 
         options={{
         title: "Add habit",
         tabBarIcon: ({color, size}) =>   <MaterialCommunityIcons name="plus-circle" size={size} color={color} />}}
