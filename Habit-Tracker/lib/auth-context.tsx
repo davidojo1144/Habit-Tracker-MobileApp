@@ -3,7 +3,7 @@ import { ID, Models } from "react-native-appwrite";
 import { account } from "./appwrite";
 
 type AuthContextType = {
-    user: Models.User<Models.Preferences> | null
+    //user: Models.User<Models.Preferences> | null
     signUp: (email: string, password: string) => Promise<string | null>
     signIn: (email: string, password: string) => Promise<string | null>
 }
@@ -32,12 +32,12 @@ export function AuthProvider({children}: {children: React.ReactNode}){
             if (error instanceof Error) {
                 return error.message
             }
-            return "An error occured during signup"
+            return "An error occured during sign in"
         }
     }
 
     return (
-        <AuthContext.Provider value={{user, signUp, signIn}}>
+        <AuthContext.Provider value={{ signUp, signIn}}>
             {children}
         </AuthContext.Provider>
     )
