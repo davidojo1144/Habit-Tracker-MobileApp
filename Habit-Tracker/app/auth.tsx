@@ -10,6 +10,7 @@ import {Text, TextInput, Button, useTheme} from "react-native-paper"
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
 import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "expo-router";
 
 
 export default function AuthScreen () {
@@ -21,6 +22,8 @@ export default function AuthScreen () {
     const theme = useTheme()
 
     const {signIn, signUp} = useAuth()
+
+    const router = useRouter()
 
     const handleAuth = async () => {
         if(!email || !password){
@@ -36,9 +39,18 @@ export default function AuthScreen () {
         setError(null)
 
         if (isSignUp) {
-            await signUp(email, password)
+            const error = await signUp(email, password)
+            if (error) {
+                setError(error)
+                return
+            }
         } else {
-            await signIn(email, password)
+            const error = await signIn(email, password)
+            if (error) {
+                setError(error)
+                return
+            }
+            router.replace("/")
         }
     }
 
@@ -67,7 +79,7 @@ export default function AuthScreen () {
                 <TextInput 
                 label="Password"
                 autoCapitalize="none"
-                keyboardType="email-address"
+                secureTextEntry
                 placeholder="Enter pasword"
                 mode="outlined"
                 onChangeText={setPassword}

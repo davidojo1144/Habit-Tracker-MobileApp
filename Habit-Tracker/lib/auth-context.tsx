@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import { ID, Models } from "react-native-appwrite";
 import { account } from "./appwrite";
 
+
 type AuthContextType = {
     //user: Models.User<Models.Preferences> | null
     signUp: (email: string, password: string) => Promise<string | null>
@@ -11,6 +12,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({children}: {children: React.ReactNode}){
+
     const signUp = async (email: string, password: string) => {
         try {
             await account.create(ID.unique(), email, password)
@@ -37,7 +39,7 @@ export function AuthProvider({children}: {children: React.ReactNode}){
     }
 
     return (
-        <AuthContext.Provider value={{ signUp, signIn}}>
+        <AuthContext.Provider value={{ signUp, signIn,}}>
             {children}
         </AuthContext.Provider>
     )
