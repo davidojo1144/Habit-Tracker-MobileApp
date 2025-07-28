@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { ID, Models } from "react-native-appwrite";
 import { account } from "./appwrite";
 
@@ -44,5 +44,9 @@ export function AuthProvider({children}: {children: React.ReactNode}){
 }
 
 export function useAuth() {
-
+    const context = useContext(AuthContext)
+    if (context === undefined) {
+        throw new Error("Something happened to the context");
+    }
+    return context
 }
