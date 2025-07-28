@@ -9,6 +9,7 @@ import {
 import {Text, TextInput, Button, useTheme} from "react-native-paper"
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useAuth } from "@/lib/auth-context";
 
 
 export default function AuthScreen () {
@@ -18,6 +19,8 @@ export default function AuthScreen () {
     const [error, setError] = useState<string | null>("")
 
     const theme = useTheme()
+
+    const {signIn, signUp} = useAuth()
 
     const handleAuth = async () => {
         if(!email || !password){
@@ -31,6 +34,12 @@ export default function AuthScreen () {
         }
 
         setError(null)
+
+        if (isSignUp) {
+            await signUp(email, password)
+        } else {
+            await signIn(email, password)
+        }
     }
 
 
