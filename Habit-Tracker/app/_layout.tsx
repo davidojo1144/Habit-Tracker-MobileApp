@@ -4,15 +4,15 @@ import { useEffect } from "react";
 
 function RouteGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const {user} = useAuth()
+  const {user, isLoadingUser} = useAuth()
   const segments = useSegments()
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const inAuthGroup = segments[0] === "auth"
-      if (!user && !inAuthGroup) {
+      if (!user && !inAuthGroup && !isLoadingUser) {
         router.replace("/auth");
-      } else if (user && inAuthGroup) {
+      } else if (user && inAuthGroup && !isLoadingUser) {
         router.replace("/")
       }
     }, 0);
