@@ -1,7 +1,11 @@
 
+import { useAuth } from "@/lib/auth-context";
 import { Text, View } from "react-native";
+import { Button } from "react-native-paper";
+
 
 export default function Index() {
+  const {signOut} = useAuth()
   return (
     <View
       style={{
@@ -11,6 +15,7 @@ export default function Index() {
       }}
     >
       <Text>index screen</Text>
+      <Button onPress={signOut} mode="text" icon={"logout"}>Sign out</Button>
     </View>
   );
 }
