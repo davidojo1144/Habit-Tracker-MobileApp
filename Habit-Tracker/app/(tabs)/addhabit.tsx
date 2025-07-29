@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { DATABASE_ID, databases, HABIT_COLLECTION_ID } from "@/lib/appwrite";
 import { ID } from "react-native-appwrite";
+import { useRouter } from "expo-router";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"]
 type frequency = (typeof FREQUENCIES)[number]
@@ -14,25 +15,36 @@ export default function AddHabitScreen(){
     const [title, setTitle] = useState<string>("")
     const [description, setDescription] = useState<string>("")
     const [frequency, setFrequency] = useState<frequency>("daily")
+    const [error, setError] = useState<string>("")
     const {user} = useAuth()
+    const router = useRouter()
 
     const handleSubmit = async () => {
         if (!user) return
-
-        await databases.createDocument(
-            DATABASE_ID,
-            HABIT_COLLECTION_ID,
-            ID.unique(),
-            {
-                user_id: user.$id,
-                title,
-                description,
-                frequency,
-                steak_count: 0,
-                last_completed: new Date().toISOString(),
-                created_at: new Date().toISOString(),
+        try {
+            await databases.createDocument(
+                DATABASE_ID,
+                HABIT_COLLECTION_ID,
+                ID.unique(),
+                {
+                    user_id: user.$id,
+                    title,
+                    description,
+                    frequency,
+                    steak_count: 0,
+                    last_completed: new Date().toISOString(),
+                    created_at: new Date().toISOString(),
+                }
+            )
+            router.back()
+            
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message)
+                return
             }
-        )
+            setError("There was an error at creating the habit")
+        }
     }
 
     return (
