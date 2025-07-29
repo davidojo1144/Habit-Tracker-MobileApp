@@ -36,11 +36,6 @@ export default function Index() {
     <View style={styles.container}>
       <View>
         <Text style={styles.headline}>Today's Habits</Text>
-        <Button 
-        style={styles.button} 
-        onPress={signOut} 
-        mode="text" 
-        icon={"logout"}>Sign out</Button>
       </View>
       <View style={styles.content}>
       {
@@ -60,8 +55,8 @@ export default function Index() {
                   color={"#ff9800"}
                 />
               </View>
-              <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.streak_count} day streak</Text>
-              <View>
+              <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.streak_count} day streak</Text>
                 <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</Text>
               </View>
             </View>
@@ -69,6 +64,11 @@ export default function Index() {
         )
       }
       </View>
+      <Button 
+        style={styles.button} 
+        onPress={signOut} 
+        mode="text" 
+        icon={"logout"}>Sign out</Button>
     </View>
   )
 }
@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: wp(3),
-    //justifyContent: "center",
-    //alignItems: "center"
   },
   headline: {
     fontSize: RFValue(25)
@@ -88,18 +86,18 @@ const styles = StyleSheet.create({
     marginTop: hp(2),
   },
   button: {
-    backgroundColor: "blue",
-    marginTop: hp(1),
+    backgroundColor: '#6b21a8',
+    marginTop: hp(3),
     width: wp(40)
   },
   content: {
-    gap: wp(2)
+    gap: wp(2),
   },
  wrapper: {
   border: '#e0e0e0', 
   borderRadius: wp(3), 
   padding: wp(3), 
-  backgroundColor: '#ffffff',
+  backgroundColor: '#fae8ffff',
   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', 
   marginTop: hp(2), 
   transition: 'all 0.3s ease',
