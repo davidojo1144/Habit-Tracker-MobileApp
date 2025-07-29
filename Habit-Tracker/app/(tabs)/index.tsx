@@ -48,16 +48,16 @@ export default function Index() {
             <View style={styles.wrapper} key={key}>
               <Text style={{fontSize: RFValue(20), color: "black", fontWeight: 500}}>{habit.title}</Text>
               <Text style={{fontSize: RFValue(17), marginTop: hp(1), color: "gray"}}>{habit.description}</Text>
-              <View style={{flexDirection: "row",  gap: wp(1), padding: wp(0.5), backgroundColor: "#ffd4b2", width: wp(40), marginTop: hp(1), borderRadius: wp(2)}}>
+              <View style={{flexDirection: "row", alignItems: "center",  gap: wp(1), padding: wp(0.5), backgroundColor: "#ffd4b2", width: wp(30), marginTop: hp(1), borderRadius: wp(2)}}>
                 <MaterialCommunityIcons 
                   name="fire"
-                  size={28}
+                  size={20}
                   color={"#ff9800"}
                 />
-                <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.streak_count} day streak</Text>
+                <Text style={{fontSize: RFValue(12), marginTop: hp(1), color: "gray"}}>{habit.streak_count} day streak</Text>
               </View>
               <View>
-                <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</Text>
+                <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: '#6b21a8'}}>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</Text>
               </View>
             </View>
           ))
