@@ -5,11 +5,12 @@ import { Button, SegmentedButtons, TextInput } from "react-native-paper"
 import { useState } from "react";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"]
+type frequency = (typeof FREQUENCIES)[number]
 
 export default function AddHabitScreen(){
     const [title, setTitle] = useState<string>("")
     const [description, setDescription] = useState<string>("")
-    const [frequency, setFrequency] = useState<string>("")
+    const [frequency, setFrequency] = useState<frequency>("daily")
 
     return (
         <View style={styles.container}>
