@@ -8,5 +8,5 @@ export const client = new Client()
 export const account = new Account(client)
 export const databases = new Databases(client)
 
-const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DB_ID!
-const HABIT_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!
+export const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DB_ID!
+export const HABIT_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!
