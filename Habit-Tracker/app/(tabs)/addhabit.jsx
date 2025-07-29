@@ -1,11 +1,18 @@
 import { Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
+import { SegmentedButtons, TextInput } from "react-native-paper"
 
 
 export default function AddHabitScreen(){
     return (
-        <SafeAreaView>
-
-        </SafeAreaView>
+        <View>
+            <TextInput label="Title" mode="outlined"/>
+            <TextInput label="Description" mode="outlined"/>
+            <SegmentedButtons
+            buttons={[
+                {value: "daily", label: "daily"},
+                {value: "daily", label: "daily"}
+            ]}
+            />
+        </View>
     )
 }
