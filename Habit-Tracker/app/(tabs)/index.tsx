@@ -35,13 +35,17 @@ export default function Index() {
     <View style={styles.container}>
       <View>
         <Text style={styles.headline}>Today's Habits</Text>
-        <Button onPress={signOut} mode="text" icon={"logout"}>Sign out</Button>
+        <Button 
+        style={styles.button} 
+        onPress={signOut} 
+        mode="text" 
+        icon={"logout"}>Sign out</Button>
       </View>
 
       {
         habits?.length === 0 ? (
           <View>
-            <Text>Theres no habit, Create your first habit</Text>
+            <Text style={styles.habittext}>Theres no habit, Create your first habit</Text>
           </View>
         ) : (
           habits?.map((habit, key) => (
@@ -63,6 +67,14 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   headline: {
-    fontSize: RFValue(20)
+    fontSize: RFValue(25)
+  },
+  habittext: {
+    fontSize: RFValue(15),
+    marginTop: hp(2)
+  },
+  button: {
+    backgroundColor: "blue",
+    marginTop: hp(1)
   }
 })
