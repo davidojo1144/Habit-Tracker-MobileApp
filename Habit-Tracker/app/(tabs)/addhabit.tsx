@@ -4,6 +4,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { Button, SegmentedButtons, TextInput } from "react-native-paper"
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { DATABASE_ID, databases, HABIT_COLLECTION_ID } from "@/lib/appwrite";
+import { ID } from "react-native-appwrite";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"]
 type frequency = (typeof FREQUENCIES)[number]
@@ -14,8 +16,23 @@ export default function AddHabitScreen(){
     const [frequency, setFrequency] = useState<frequency>("daily")
     const {user} = useAuth()
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!user) return
+
+        await databases.createDocument(
+            DATABASE_ID,
+            HABIT_COLLECTION_ID,
+            ID.unique(),
+            {
+                user_id: user.$id,
+                title,
+                description,
+                frequency,
+                steak_count: 0,
+                last_completed: new Date().toISOString(),
+                created_at: new Date().toISOString(),
+            }
+        )
     }
 
     return (
