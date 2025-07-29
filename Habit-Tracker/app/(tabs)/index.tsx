@@ -46,17 +46,17 @@ export default function Index() {
         ) : (
           habits?.map((habit, key) => (
             <View style={styles.wrapper} key={key}>
-              <Text style={{fontSize: RFValue(20), color: "gray"}}>{habit.title}</Text>
-              <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.description}</Text>
-              <View>
+              <Text style={{fontSize: RFValue(20), color: "black", fontWeight: 500}}>{habit.title}</Text>
+              <Text style={{fontSize: RFValue(17), marginTop: hp(1), color: "gray"}}>{habit.description}</Text>
+              <View style={{flexDirection: "row",  gap: wp(1), padding: wp(0.5), backgroundColor: "#ffd4b2", width: wp(40), marginTop: hp(1), borderRadius: wp(2)}}>
                 <MaterialCommunityIcons 
                   name="fire"
                   size={28}
                   color={"#ff9800"}
                 />
-              </View>
-              <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                 <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.streak_count} day streak</Text>
+              </View>
+              <View>
                 <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: "gray"}}>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</Text>
               </View>
             </View>
