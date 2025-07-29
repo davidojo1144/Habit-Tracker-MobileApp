@@ -1,5 +1,5 @@
 
-import { DATABASE_ID, databases, HABIT_COLLECTION_ID } from "@/lib/appwrite";
+import { client, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
 import { Habit } from "@/types/database.type";
 import { useEffect, useState } from "react";
@@ -18,6 +18,18 @@ export default function Index() {
 
   useEffect(() => {
     fetchHabits()
+
+    const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
+    const HabitsSubscription = client.subscribe(
+      channel,
+      (response: RealTimeResponse) => {
+        if (response.events.includes(
+          "databases.*.collections.*.documents.*.create"
+        )) {
+          fetchHabits()
+        }
+      }
+    )
   }, [user])
 
   const fetchHabits = async () => {
