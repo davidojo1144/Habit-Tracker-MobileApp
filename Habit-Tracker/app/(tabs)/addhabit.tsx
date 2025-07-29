@@ -2,10 +2,15 @@ import { StyleSheet, Text, View } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Button, SegmentedButtons, TextInput } from "react-native-paper"
+import { useState } from "react";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"]
 
 export default function AddHabitScreen(){
+    const [title, setTitle] = useState<string>("")
+    const [description, setDescription] = useState<string>("")
+    const [frequency, setFrequency] = useState<string>("")
+
     return (
         <View style={styles.container}>
             <TextInput style={styles.input} label="Title" mode="outlined"/>
