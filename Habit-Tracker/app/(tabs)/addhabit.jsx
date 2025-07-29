@@ -1,18 +1,42 @@
-import { Text, View } from "react-native"
-import { SegmentedButtons, TextInput } from "react-native-paper"
+import { StyleSheet, Text, View } from "react-native"
+import { RFValue } from "react-native-responsive-fontsize";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Button, SegmentedButtons, TextInput } from "react-native-paper"
 
+const FREQUENCIES = ["daily", "weekly", "monthly"]
 
 export default function AddHabitScreen(){
     return (
-        <View>
-            <TextInput label="Title" mode="outlined"/>
-            <TextInput label="Description" mode="outlined"/>
-            <SegmentedButtons
-            buttons={[
-                {value: "daily", label: "daily"},
-                {value: "daily", label: "daily"}
-            ]}
-            />
+        <View style={styles.container}>
+            <TextInput style={styles.input} label="Title" mode="outlined"/>
+            <TextInput style={styles.input} label="Description" mode="outlined"/>
+            <View>
+                <SegmentedButtons
+                buttons={
+                    FREQUENCIES.map((freq) => ({
+                        value: freq,
+                        label: freq.charAt(0).toUpperCase() + freq.slice(1)
+                }))}
+                />
+            </View>
+            <Button style={styles.button} mode="contained">Add Habits</Button>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: wp(3),
+        backgroundColor: "#f5f5f5"
+    },
+    input: {
+        backgroundColor: "white",
+        marginBottom: hp(1)
+    },
+    button:{
+        marginTop: hp(3),
+        color: "#fff",
+        padding: wp(1.5)
+    }
+})
