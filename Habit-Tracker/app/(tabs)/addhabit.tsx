@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Button, SegmentedButtons, TextInput } from "react-native-paper"
+import { Button, SegmentedButtons, TextInput, useTheme, Text } from "react-native-paper"
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { DATABASE_ID, databases, HABIT_COLLECTION_ID } from "@/lib/appwrite";
@@ -18,6 +18,7 @@ export default function AddHabitScreen(){
     const [error, setError] = useState<string>("")
     const {user} = useAuth()
     const router = useRouter()
+    const theme = useTheme()
 
     const handleSubmit = async () => {
         if (!user) return
@@ -72,7 +73,12 @@ export default function AddHabitScreen(){
                 }))}
                 />
             </View>
-            <Button onPress={handleSubmit} disabled={!title || !description} style={styles.button} mode="contained">Add Habits</Button>
+            <Button 
+            onPress={handleSubmit} 
+            disabled={!title || !description} 
+            style={styles.button} 
+            mode="contained">Add Habits</Button>
+            { error && <Text style={{color: theme.colors.error, paddingTop : hp(2), fontSize: RFValue(12)}}>{error}</Text>}
         </View>
     )
 }
@@ -85,7 +91,7 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: "white",
-        marginBottom: hp(1)
+        marginBottom: hp(1),
     },
     button:{
         marginTop: hp(3),
