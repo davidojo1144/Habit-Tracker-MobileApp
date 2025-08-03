@@ -47,15 +47,16 @@ export default function Index() {
           if (
             response.events.includes("databases.*.collections.*.documents.*.create")
           ) {
-            fetchHabits();
+            fetchTodayCompletions()
           }
-        }
+        })
 
       fetchHabits(),
       fetchTodayCompletions()
 
       return () => {
         HabitsSubscription();
+        completionSubscription();
       };
     }
   }, [user]);
