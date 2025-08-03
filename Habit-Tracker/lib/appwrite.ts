@@ -10,6 +10,7 @@ export const databases = new Databases(client)
 
 export const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DB_ID!
 export const HABIT_COLLECTION_ID = process.env.EXPO_PUBLIC_APPWRITE_COLLECTION_ID!
+export const COMPLETIONS_ID = process.env.EXPO_PUBLIC_APPWRITE_COMPLETIONS_ID!
 
 export interface RealTimeResponse {
     events: string[],
