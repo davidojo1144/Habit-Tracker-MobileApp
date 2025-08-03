@@ -1,9 +1,9 @@
-import { client, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
+import { client, COMPLETIONS_ID, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
 import { Habit } from "@/types/database.type";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View, Animated, TouchableOpacity } from "react-native";
-import { Query } from "react-native-appwrite";
+import { ID, Query } from "react-native-appwrite";
 import { Button, useTheme } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
@@ -100,10 +100,21 @@ export default function Index() {
 
   const handleComplete = async (habitId: string) => {
     try {
-      await databases.updateDocument(DATABASE_ID, HABIT_COLLECTION_ID, habitId, {
-        streak_count: habits?.find((h) => h.$id === habitId)?.streak_count + 1,
+      await databases.createDocument(DATABASE_ID, 
+        COMPLETIONS_ID, ID.unique(), 
+        {
+          habit_id: habitId,
+          user_id: user?.$id,
+          completed_at: new Date().toISOString()
       });
-      fetchHabits();
+      //fetchHabits();
+      const habit = habits?.find((h) => h.$id === habitId)
+      if(!habit) return
+
+      await databases.updateDocument(DATABASE_ID, HABIT_COLLECTION_ID, habitId, {
+        streak_count: habit.streak_count + 1,
+        last_completed: new Date().toISOString()
+      })
     } catch (error) {
       console.error('Error completing habit:', error);
     }
