@@ -64,6 +64,8 @@ export default function AddHabitScreen() {
     } finally {
       setIsLoading(false);
     }
+    setTitle("")
+    setDescription("")
   };
 
   return (
