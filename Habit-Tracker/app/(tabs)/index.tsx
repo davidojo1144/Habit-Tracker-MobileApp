@@ -76,8 +76,7 @@ export default function Index() {
       today.setHours(0,0,0,0)
       const response = await databases.listDocuments(DATABASE_ID, 
         COMPLETIONS_ID, 
-        [Query.equal("user_id", user?.$id ?? ""),
-      ]);
+        [Query.equal("user_id", user?.$id ?? ""), Query.greaterThanEqual("completed_at", today.toISOString())]);
       setHabits(response.documents as Habit[]);
     } catch (error) {
       console.error(error);
