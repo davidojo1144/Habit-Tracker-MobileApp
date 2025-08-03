@@ -117,7 +117,6 @@ export default function AuthScreen () {
 
                         <TextInput 
                             label="Password"
-                            autoCapitalize="none"
                             secureTextEntry={secureTextEntry}
                             placeholder="Enter your password"
                             mode="outlined"
@@ -135,7 +134,7 @@ export default function AuthScreen () {
                                 variant="bodySmall" 
                                 style={[
                                     styles.errorText, 
-                                    {color: "red", fontSize: RFValue(15)}
+                                    {color: "red", fontSize: RFValue(12)}
                                 ]}
                             >
                                 {error}
