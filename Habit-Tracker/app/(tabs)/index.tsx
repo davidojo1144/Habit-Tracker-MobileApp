@@ -63,9 +63,22 @@ export default function Index() {
         Query.equal("user_id", user?.$id ?? ""),
       ]);
       setHabits(response.documents as Habit[]);
-      // Reset animations for new habits
       fadeAnims.length = 0;
       response.documents.forEach(() => fadeAnims.push(new Animated.Value(0)));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTodayCompletions = async () => {
+    try {
+      const today = new Date()
+      today.setHours(0,0,0,0)
+      const response = await databases.listDocuments(DATABASE_ID, 
+        COMPLETIONS_ID, 
+        [Query.equal("user_id", user?.$id ?? ""),
+      ]);
+      setHabits(response.documents as Habit[]);
     } catch (error) {
       console.error(error);
     }
