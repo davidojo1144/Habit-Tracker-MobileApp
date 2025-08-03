@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 
 export default function TabsLayout() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <Tabs
         screenOptions={{
           headerStyle: { backgroundColor: '#f5f5f5' },
