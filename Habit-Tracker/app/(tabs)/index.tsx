@@ -1,6 +1,6 @@
 import { client, COMPLETIONS_ID, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
-import { Habit, HabitCompletion } from "@/types/database.type";
+import { Habit } from "@/types/database.type";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View, Animated, TouchableOpacity } from "react-native";
 import { ID, Query } from "react-native-appwrite";
@@ -14,20 +14,17 @@ import { useRouter } from "expo-router";
 export default function Index() {
   const { signOut, user } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [completed, setCompleted] = useState<string[]>([]);
-
   const swipableRefs = useRef<{ [key: string]: Swipeable | null }>({});
   const theme = useTheme();
   const router = useRouter();
 
-  
   const fadeAnims = useRef(habits?.map(() => new Animated.Value(0)) || []).current;
 
   useEffect(() => {
     if (user) {
-      const habitChannel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`;
+      const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`;
       const HabitsSubscription = client.subscribe(
-        habitChannel,
+        channel,
         (response: RealTimeResponse) => {
           if (
             response.events.includes("databases.*.collections.*.documents.*.create") ||
@@ -39,30 +36,13 @@ export default function Index() {
         }
       );
 
-
-      const completedChannel = `databases.${DATABASE_ID}.collections.${COMPLETIONS_ID}.documents`;
-      const completionSubscription = client.subscribe(
-        completedChannel,
-        (response: RealTimeResponse) => {
-          if (
-            response.events.includes("databases.*.collections.*.documents.*.create")
-          ) {
-            fetchTodayCompletions()
-          }
-        })
-
-      fetchHabits(),
-      fetchTodayCompletions()
+      fetchHabits();
 
       return () => {
         HabitsSubscription();
-        completionSubscription();
       };
     }
   }, [user]);
-
-
-  
 
   useEffect(() => {
     fadeAnims.forEach((anim, index) => {
@@ -83,22 +63,6 @@ export default function Index() {
       setHabits(response.documents as Habit[]);
       fadeAnims.length = 0;
       response.documents.forEach(() => fadeAnims.push(new Animated.Value(0)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchTodayCompletions = async () => {
-    try {
-      const today = new Date()
-      today.setHours(0,0,0,0)
-      const response = await databases.listDocuments(
-        DATABASE_ID, 
-        COMPLETIONS_ID, 
-        [Query.equal("user_id", user?.$id ?? ""), Query.greaterThanEqual("completed_at", today.toISOString())]);
-
-      const completions = response.documents as HabitCompletion[]
-      setCompleted(completions.map((c) => c.habit_id));
     } catch (error) {
       console.error(error);
     }
@@ -132,9 +96,8 @@ export default function Index() {
   };
 
   const handleComplete = async (habitId: string) => {
-    if (!user || completed?.includes(habitId)) return
+    const currentDate = new Date().toISOString()
     try {
-      const currentDate = new Date().toISOString()
       await databases.createDocument(DATABASE_ID, 
         COMPLETIONS_ID, ID.unique(), 
         {
