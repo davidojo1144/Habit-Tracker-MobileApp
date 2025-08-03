@@ -2,18 +2,24 @@ import { client, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse }
 import { useAuth } from "@/lib/auth-context";
 import { Habit } from "@/types/database.type";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Animated, TouchableOpacity } from "react-native";
 import { Query } from "react-native-appwrite";
-import { Button } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Swipeable } from "react-native-gesture-handler";
+import { useRouter } from "expo-router";
 
 export default function Index() {
   const { signOut, user } = useAuth();
-  const [habits, setHabits] = useState<Habit[]>();
+  const [habits, setHabits] = useState<Habit[]>([]);
   const swipableRefs = useRef<{ [key: string]: Swipeable | null }>({});
+  const theme = useTheme();
+  const router = useRouter();
+
+  // Animation setup for habit cards
+  const fadeAnims = useRef(habits?.map(() => new Animated.Value(0)) || []).current;
 
   useEffect(() => {
     if (user) {
@@ -39,12 +45,27 @@ export default function Index() {
     }
   }, [user]);
 
+  useEffect(() => {
+    // Animate habit cards when habits change
+    fadeAnims.forEach((anim, index) => {
+      Animated.timing(anim, {
+        toValue: 1,
+        duration: 500,
+        delay: index * 100,
+        useNativeDriver: true,
+      }).start();
+    });
+  }, [habits]);
+
   const fetchHabits = async () => {
     try {
       const response = await databases.listDocuments(DATABASE_ID, HABIT_COLLECTION_ID, [
         Query.equal("user_id", user?.$id ?? ""),
       ]);
       setHabits(response.documents as Habit[]);
+      // Reset animations for new habits
+      fadeAnims.length = 0;
+      response.documents.forEach(() => fadeAnims.push(new Animated.Value(0)));
     } catch (error) {
       console.error(error);
     }
@@ -52,16 +73,18 @@ export default function Index() {
 
   const handleRenderLeftActions = () => {
     return (
-      <View style={styles.swipeActionLeft}>
-        <MaterialCommunityIcons name="trash-can-outline" size={32} color={"#fff"} />
+      <View style={[styles.swipeActionLeft, { backgroundColor: theme.colors.error }]}>
+        <MaterialCommunityIcons name="trash-can-outline" size={RFValue(24)} color={"#fff"} />
+        <Text style={styles.swipeActionText}>Delete</Text>
       </View>
     );
   };
 
   const handleRenderRightActions = () => {
     return (
-      <View style={styles.swipeActionRight}>
-        <MaterialCommunityIcons name="check-circle-outline" size={32} color={"#fff"} />
+      <View style={[styles.swipeActionRight, { backgroundColor: theme.colors.primary }]}>
+        <MaterialCommunityIcons name="check-circle-outline" size={RFValue(24)} color={"#fff"} />
+        <Text style={styles.swipeActionText}>Complete</Text>
       </View>
     );
   };
@@ -87,65 +110,99 @@ export default function Index() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View>
-        <Text style={styles.headline}>Today's Habits</Text>
+    <ScrollView style={[styles.container]}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.headline, { color: theme.colors.onBackground }]}>Today's Habits</Text>
+        <TouchableOpacity
+          onPress={() => router.push("/addhabit")}
+          accessibilityLabel="Add new habit"
+        >
+          <MaterialCommunityIcons name="plus-circle" size={RFValue(28)} color={theme.colors.primary} />
+        </TouchableOpacity>
       </View>
+
+      {/* Content */}
       <View style={styles.content}>
         {habits?.length === 0 ? (
-          <View>
-            <Text style={styles.habittext}>There's no habit, Create your first habit</Text>
+          <View style={styles.noHabitsContainer}>
+            <MaterialCommunityIcons name="emoticon-sad-outline" size={RFValue(48)} color={theme.colors.onSurface} />
+            <Text style={[styles.habittext, { color: theme.colors.onSurface }]}>
+              No habits yet! Create your first habit.
+            </Text>
+            <Button
+              mode="contained"
+              onPress={() => router.push("/add-habit")}
+              style={styles.createButton}
+              labelStyle={{ fontSize: RFValue(14) }}
+              accessibilityLabel="Create first habit"
+            >
+              Create Habit
+            </Button>
           </View>
         ) : (
-          habits?.map((habit, key) => (
-            <Swipeable
-              ref={(ref) => {
-                swipableRefs.current[habit.$id] = ref;
-              }}
-              key={key}
-              overshootLeft={false}
-              overshootRight={false}
-              renderLeftActions={handleRenderLeftActions}
-              renderRightActions={handleRenderRightActions}
-              onSwipeableLeftOpen={() => handleDelete(habit.$id)}
-              onSwipeableRightOpen={() => handleComplete(habit.$id)}
+          habits?.map((habit, index) => (
+            <Animated.View
+              key={habit.$id}
+              style={[
+                styles.wrapper,
+                {
+                  opacity: fadeAnims[index],
+                  transform: [{ translateY: fadeAnims[index].interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) }],
+                },
+              ]}
             >
-              <View style={styles.wrapper}>
-                <Text style={{ fontSize: RFValue(20), color: "black", fontWeight: "500" }}>
-                  {habit.title}
-                </Text>
-                <Text style={{ fontSize: RFValue(17), marginTop: hp(1), color: "gray" }}>
-                  {habit.description}
-                </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: wp(1),
-                    padding: wp(0.5),
-                    backgroundColor: "#ffd4b2",
-                    width: wp(30),
-                    marginTop: hp(1),
-                    borderRadius: wp(2),
-                  }}
-                >
-                  <MaterialCommunityIcons name="fire" size={20} color={"#ff9800"} />
-                  <Text style={{ fontSize: RFValue(12), marginTop: hp(1), color: "gray" }}>
-                    {habit.streak_count} day streak
+              <Swipeable
+                ref={(ref) => {
+                  swipableRefs.current[habit.$id] = ref;
+                }}
+                overshootLeft={false}
+                overshootRight={false}
+                renderLeftActions={handleRenderLeftActions}
+                renderRightActions={handleRenderRightActions}
+                onSwipeableLeftOpen={() => handleDelete(habit.$id)}
+                onSwipeableRightOpen={() => handleComplete(habit.$id)}
+              >
+                <View style={[styles.habitCard, { backgroundColor: theme.colors.surface }]}>
+                  <View style={styles.habitHeader}>
+                    <Text style={[styles.habitTitle, { color: theme.colors.onSurface }]}>
+                      {habit.title}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name={habit.streak_count > 0 ? "check-circle" : "circle-outline"}
+                      size={RFValue(20)}
+                      color={habit.streak_count > 0 ? theme.colors.primary : theme.colors.onSurface}
+                    />
+                  </View>
+                  <Text style={[styles.habitDescription, { color: theme.colors.onSurfaceVariant }]}>
+                    {habit.description}
                   </Text>
-                </View>
-                <View>
-                  <Text style={{ fontSize: RFValue(15), marginTop: hp(1), color: "#6b21a8" }}>
+                  <View style={styles.streakContainer}>
+                    <MaterialCommunityIcons name="fire" size={RFValue(18)} color="#ff9800" />
+                    <Text style={[styles.streakText, { color: theme.colors.onSurfaceVariant }]}>
+                      {habit.streak_count} day streak
+                    </Text>
+                  </View>
+                  <Text style={[styles.frequencyText, { color: theme.colors.primary }]}>
                     {habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}
                   </Text>
                 </View>
-              </View>
-            </Swipeable>
+              </Swipeable>
+            </Animated.View>
           ))
         )}
       </View>
-      <Button style={styles.button} onPress={signOut} mode="text" icon={"logout"}>
-        Sign out
+
+      {/* Sign Out Button */}
+      <Button
+        style={[styles.button, { backgroundColor: theme.colors.errorContainer }]}
+        onPress={signOut}
+        mode="contained"
+        icon={"logout"}
+        labelStyle={{ fontSize: RFValue(14) }}
+        accessibilityLabel="Sign out"
+      >
+        Sign Out
       </Button>
     </ScrollView>
   );
@@ -154,48 +211,107 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: wp(3),
+    padding: wp(4),
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: hp(3),
   },
   headline: {
-    fontSize: RFValue(25),
-  },
-  habittext: {
-    fontSize: RFValue(15),
-    marginTop: hp(2),
-  },
-  button: {
-    backgroundColor: "#6b21a8",
-    marginTop: hp(3),
-    width: wp(40),
-    marginBottom: hp(4),
+    fontSize: RFValue(26),
+    fontWeight: "700",
   },
   content: {
-    gap: wp(2),
+    gap: wp(3),
+  },
+  noHabitsContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: hp(10),
+  },
+  habittext: {
+    fontSize: RFValue(16),
+    marginTop: hp(2),
+    textAlign: "center",
+  },
+  createButton: {
+    marginTop: hp(3),
+    padding: wp(1.5),
+    borderRadius: wp(2),
+  },
+  button: {
+    marginTop: hp(3),
+    marginBottom: hp(4),
+    padding: wp(1.5),
+    borderRadius: wp(2),
+    alignSelf: "center",
+    width: wp(40),
   },
   wrapper: {
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    borderRadius: wp(3),
-    padding: wp(3),
-    backgroundColor: "#fae8ff",
     marginTop: hp(2),
+  },
+  habitCard: {
+    borderRadius: wp(3),
+    padding: wp(4),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  habitHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: hp(1),
+  },
+  habitTitle: {
+    fontSize: RFValue(20),
+    fontWeight: "600",
+  },
+  habitDescription: {
+    fontSize: RFValue(16),
+    marginBottom: hp(1.5),
+  },
+  streakContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp(1.5),
+    padding: wp(1.5),
+    backgroundColor: "#fff3e0",
+    borderRadius: wp(2),
+    marginBottom: hp(1),
+  },
+  streakText: {
+    fontSize: RFValue(12),
+  },
+  frequencyText: {
+    fontSize: RFValue(14),
+    fontWeight: "500",
   },
   swipeActionLeft: {
-    backgroundColor: "#ff4444",
     justifyContent: "center",
     alignItems: "center",
     width: wp(20),
     height: "100%",
+    borderRadius: wp(3),
     marginTop: hp(2),
-    borderRadius: hp(1)
   },
   swipeActionRight: {
-    backgroundColor: "#00cc00",
     justifyContent: "center",
     alignItems: "center",
     width: wp(20),
     height: "100%",
+    borderRadius: wp(3),
     marginTop: hp(2),
-    borderRadius: hp(1)
+  },
+  swipeActionText: {
+    color: "#fff",
+    fontSize: RFValue(12),
+    marginTop: hp(1),
+    fontWeight: "500",
   },
 });
