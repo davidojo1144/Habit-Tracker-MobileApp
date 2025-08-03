@@ -43,6 +43,7 @@ export default function StreaksScreen() {
   }, [habits, filter]);
 
   useEffect(() => {
+    // Initialize animations for filtered habits
     filteredHabits.forEach((habit, index) => {
       if (!fadeAnims[index]) {
         fadeAnims[index] = new Animated.Value(0);
@@ -65,6 +66,13 @@ export default function StreaksScreen() {
         }),
       ]).start();
     });
+    // Cleanup: Reset animations for habits no longer in filteredHabits
+    fadeAnims.length = filteredHabits.length;
+    Object.keys(scaleAnims).forEach((key) => {
+      if (!filteredHabits.some((habit) => habit.$id === key)) {
+        delete scaleAnims[key];
+      }
+    });
   }, [filteredHabits]);
 
   const fetchHabits = async () => {
@@ -73,8 +81,14 @@ export default function StreaksScreen() {
         Query.equal("user_id", user?.$id ?? ""),
         Query.orderDesc("streak_count"),
       ]);
-      setHabits(response.documents as Habit[]);
+      const fetchedHabits = response.documents as Habit[];
+      setHabits(fetchedHabits);
       setError("");
+      // Pre-initialize animations
+      fetchedHabits.forEach((habit, index) => {
+        fadeAnims[index] = new Animated.Value(0);
+        scaleAnims[habit.$id] = new Animated.Value(1);
+      });
     } catch (error) {
       console.error("Error fetching habits:", error);
       setError("Failed to load habits. Please try again.");
@@ -100,26 +114,25 @@ export default function StreaksScreen() {
   };
 
   const getProgress = (habit: Habit) => {
-    // Calculate progress as a percentage (e.g., towards a 30-day goal for daily habits)
     const maxStreak = habit.frequency === "daily" ? 30 : habit.frequency === "weekly" ? 8 : 3;
     return Math.min((habit.streak_count / maxStreak) * 100, 100);
   };
 
   const handleCardPress = (habitId: string) => {
-    // Scale animation on press
-    Animated.sequence([
-      Animated.timing(scaleAnims[habitId], {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnims[habitId], {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
-    // Navigate to a habit detail screen (placeholder route)
+    if (scaleAnims[habitId]) {
+      Animated.sequence([
+        Animated.timing(scaleAnims[habitId], {
+          toValue: 0.95,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnims[habitId], {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
     router.push(`/habit/${habitId}`);
   };
 
@@ -174,6 +187,10 @@ export default function StreaksScreen() {
           filteredHabits.map((habit, index) => {
             const streakStatus = getStreakStatus(habit);
             const progress = getProgress(habit);
+            // Only render if animations are initialized
+            if (!fadeAnims[index] || !scaleAnims[habit.$id]) {
+              return null;
+            }
             return (
               <Animated.View
                 key={habit.$id}
@@ -183,7 +200,7 @@ export default function StreaksScreen() {
                     opacity: fadeAnims[index],
                     transform: [
                       { translateY: fadeAnims[index].interpolate({ inputRange: [0, 1], outputRange: [50, 0] }) },
-                      { scale: scaleAnims[habit.$id] || 1 },
+                      { scale: scaleAnims[habit.$id] },
                     ],
                   },
                 ]}
@@ -194,7 +211,7 @@ export default function StreaksScreen() {
                   accessibilityLabel={`View details for ${habit.title}`}
                 >
                   <LinearGradient
-                    colors={["#4b0082", "#6a0dad"]} // Purple gradient
+                    colors={["#4b0082", "#6a0dad"]}
                     style={[styles.habitCard, { borderColor: streakStatus.color }]}
                   >
                     <View style={styles.habitHeader}>
