@@ -73,7 +73,7 @@ export default function Index() {
 
   const handleRenderLeftActions = () => {
     return (
-      <View style={[styles.swipeActionLeft, { backgroundColor: theme.colors.error }]}>
+      <View style={[styles.swipeActionLeft, { backgroundColor: "red" }]}>
         <MaterialCommunityIcons name="trash-can-outline" size={RFValue(24)} color={"#fff"} />
         <Text style={styles.swipeActionText}>Delete</Text>
       </View>
@@ -82,7 +82,7 @@ export default function Index() {
 
   const handleRenderRightActions = () => {
     return (
-      <View style={[styles.swipeActionRight, { backgroundColor: theme.colors.primary }]}>
+      <View style={[styles.swipeActionRight, { backgroundColor: "green" }]}>
         <MaterialCommunityIcons name="check-circle-outline" size={RFValue(24)} color={"#fff"} />
         <Text style={styles.swipeActionText}>Complete</Text>
       </View>
@@ -192,9 +192,8 @@ export default function Index() {
         )}
       </View>
 
-      {/* Sign Out Button */}
       <Button
-        style={[styles.button, { backgroundColor: theme.colors.errorContainer }]}
+        style={[styles.button, { backgroundColor: "" }]}
         onPress={signOut}
         mode="contained"
         icon={"logout"}
@@ -297,7 +296,6 @@ const styles = StyleSheet.create({
     width: wp(20),
     height: "100%",
     borderRadius: wp(3),
-    marginTop: hp(2),
   },
   swipeActionRight: {
     justifyContent: "center",
@@ -305,7 +303,6 @@ const styles = StyleSheet.create({
     width: wp(20),
     height: "100%",
     borderRadius: wp(3),
-    marginTop: hp(2),
   },
   swipeActionText: {
     color: "#fff",
