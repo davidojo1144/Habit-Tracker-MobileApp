@@ -162,9 +162,9 @@ export default function Index() {
                 onSwipeableLeftOpen={() => handleDelete(habit.$id)}
                 onSwipeableRightOpen={() => handleComplete(habit.$id)}
               >
-                <View style={[styles.habitCard, { backgroundColor: theme.colors.surface }]}>
+                <View style={[styles.habitCard, { backgroundColor: "gray" }]}>
                   <View style={styles.habitHeader}>
-                    <Text style={[styles.habitTitle, { color: theme.colors.onSurface }]}>
+                    <Text style={[styles.habitTitle, { color: "white" }]}>
                       {habit.title}
                     </Text>
                     <MaterialCommunityIcons
@@ -173,16 +173,16 @@ export default function Index() {
                       color={habit.streak_count > 0 ? theme.colors.primary : theme.colors.onSurface}
                     />
                   </View>
-                  <Text style={[styles.habitDescription, { color: theme.colors.onSurfaceVariant }]}>
+                  <Text style={[styles.habitDescription, { color: "white"}]}>
                     {habit.description}
                   </Text>
                   <View style={styles.streakContainer}>
                     <MaterialCommunityIcons name="fire" size={RFValue(18)} color="#ff9800" />
-                    <Text style={[styles.streakText, { color: theme.colors.onSurfaceVariant }]}>
+                    <Text style={[styles.streakText, { color: "black" }]}>
                       {habit.streak_count} day streak
                     </Text>
                   </View>
-                  <Text style={[styles.frequencyText, { color: theme.colors.primary }]}>
+                  <Text style={[styles.frequencyText, { color: "black" }]}>
                     {habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}
                   </Text>
                 </View>
