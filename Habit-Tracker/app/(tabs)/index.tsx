@@ -111,28 +111,27 @@ export default function Index() {
 
   return (
     <ScrollView style={[styles.container]}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={[styles.headline, { color: theme.colors.onBackground }]}>Today's Habits</Text>
+        <Text style={[styles.headline, { color: "purple" }]}>Today's Habits</Text>
         <TouchableOpacity
           onPress={() => router.push("/addhabit")}
           accessibilityLabel="Add new habit"
         >
-          <MaterialCommunityIcons name="plus-circle" size={RFValue(28)} color={theme.colors.primary} />
+          <MaterialCommunityIcons name="plus-circle" size={RFValue(28)} color="purple" />
         </TouchableOpacity>
       </View>
 
-      {/* Content */}
+  
       <View style={styles.content}>
         {habits?.length === 0 ? (
           <View style={styles.noHabitsContainer}>
-            <MaterialCommunityIcons name="emoticon-sad-outline" size={RFValue(48)} color={theme.colors.onSurface} />
-            <Text style={[styles.habittext, { color: theme.colors.onSurface }]}>
+            <MaterialCommunityIcons name="emoticon-sad-outline" size={RFValue(48)} color="black" />
+            <Text style={[styles.habittext, { color: "gray" }]}>
               No habits yet! Create your first habit.
             </Text>
             <Button
               mode="contained"
-              onPress={() => router.push("/add-habit")}
+              onPress={() => router.push("/addhabit")}
               style={styles.createButton}
               labelStyle={{ fontSize: RFValue(14) }}
               accessibilityLabel="Create first habit"
