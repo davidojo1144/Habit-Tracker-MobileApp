@@ -14,7 +14,7 @@ import { useRouter } from "expo-router";
 export default function Index() {
   const { signOut, user } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [completed, setCompleted] = useState<HabitCompletion[]>([]);
+  const [completed, setCompleted] = useState<string[]>([]);
 
   const swipableRefs = useRef<{ [key: string]: Swipeable | null }>({});
   const theme = useTheme();
@@ -48,7 +48,6 @@ export default function Index() {
   }, [user]);
 
   useEffect(() => {
-    // Animate habit cards when habits change
     fadeAnims.forEach((anim, index) => {
       Animated.timing(anim, {
         toValue: 1,
@@ -80,7 +79,9 @@ export default function Index() {
         DATABASE_ID, 
         COMPLETIONS_ID, 
         [Query.equal("user_id", user?.$id ?? ""), Query.greaterThanEqual("completed_at", today.toISOString())]);
-      setHabits(response.documents as Habit[]);
+
+      const completions = response.documents as HabitCompletion[]
+      setCompleted(completions.map((c) => c.habit_id));
     } catch (error) {
       console.error(error);
     }
@@ -114,8 +115,9 @@ export default function Index() {
   };
 
   const handleComplete = async (habitId: string) => {
-    const currentDate = new Date().toISOString()
+    if (!user || completed?.includes(habitId)) return
     try {
+      const currentDate = new Date().toISOString()
       await databases.createDocument(DATABASE_ID, 
         COMPLETIONS_ID, ID.unique(), 
         {
