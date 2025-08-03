@@ -92,20 +92,21 @@ export default function Index() {
   const handleDelete = async (habitId: string) => {
     try {
       await databases.deleteDocument(DATABASE_ID, HABIT_COLLECTION_ID, habitId);
-      fetchHabits();
+      //fetchHabits();
     } catch (error) {
       console.error('Error deleting habit:', error);
     }
   };
 
   const handleComplete = async (habitId: string) => {
+    const currentDate = new Date().toISOString()
     try {
       await databases.createDocument(DATABASE_ID, 
         COMPLETIONS_ID, ID.unique(), 
         {
           habit_id: habitId,
           user_id: user?.$id,
-          completed_at: new Date().toISOString()
+          completed_at: currentDate
       });
       //fetchHabits();
       const habit = habits?.find((h) => h.$id === habitId)
@@ -113,7 +114,7 @@ export default function Index() {
 
       await databases.updateDocument(DATABASE_ID, HABIT_COLLECTION_ID, habitId, {
         streak_count: habit.streak_count + 1,
-        last_completed: new Date().toISOString()
+        last_completed: currentDate
       })
     } catch (error) {
       console.error('Error completing habit:', error);
