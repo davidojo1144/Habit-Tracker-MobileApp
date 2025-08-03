@@ -2,19 +2,21 @@
 import { client, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
 import { Habit } from "@/types/database.type";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Query } from "react-native-appwrite";
 import { Button } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { RFValue } from "react-native-responsive-fontsize";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Swipeable } from "react-native-gesture-handler";
 
 
 export default function Index() {
   const {signOut, user} = useAuth()
-
   const [habits, setHabits] = useState<Habit[]>()
+
+  const swipableRefs = useRef<{[key: string]: Swipeable | null}>({})
 
   useEffect(() => {
     if (user) {
@@ -74,6 +76,10 @@ export default function Index() {
           </View>
         ) : (
           habits?.map((habit, key) => (
+            <Swipeable ref={(ref) => {
+              swipableRefs.current[habit.$id] = ref
+              key
+            }}>
             <View style={styles.wrapper} key={key}>
               <Text style={{fontSize: RFValue(20), color: "black", fontWeight: 500}}>{habit.title}</Text>
               <Text style={{fontSize: RFValue(17), marginTop: hp(1), color: "gray"}}>{habit.description}</Text>
@@ -89,6 +95,7 @@ export default function Index() {
                 <Text style={{fontSize: RFValue(15), marginTop: hp(1), color: '#6b21a8'}}>{habit.frequency.charAt(0).toUpperCase() + habit.frequency.slice(1)}</Text>
               </View>
             </View>
+            </Swipeable>
           ))
         )
       }
