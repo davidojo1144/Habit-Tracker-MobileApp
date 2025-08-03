@@ -20,14 +20,14 @@ export default function Index() {
   const theme = useTheme();
   const router = useRouter();
 
-  // Animation setup for habit cards
+  
   const fadeAnims = useRef(habits?.map(() => new Animated.Value(0)) || []).current;
 
   useEffect(() => {
     if (user) {
-      const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`;
+      const habitChannel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`;
       const HabitsSubscription = client.subscribe(
-        channel,
+        habitChannel,
         (response: RealTimeResponse) => {
           if (
             response.events.includes("databases.*.collections.*.documents.*.create") ||
@@ -39,13 +39,29 @@ export default function Index() {
         }
       );
 
-      fetchHabits();
+
+      const completedChannel = `databases.${DATABASE_ID}.collections.${COMPLETIONS_ID}.documents`;
+      const completionSubscription = client.subscribe(
+        completedChannel,
+        (response: RealTimeResponse) => {
+          if (
+            response.events.includes("databases.*.collections.*.documents.*.create")
+          ) {
+            fetchHabits();
+          }
+        }
+
+      fetchHabits(),
+      fetchTodayCompletions()
 
       return () => {
         HabitsSubscription();
       };
     }
   }, [user]);
+
+
+  
 
   useEffect(() => {
     fadeAnims.forEach((anim, index) => {
