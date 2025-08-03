@@ -1,6 +1,6 @@
 import { client, COMPLETIONS_ID, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse } from "@/lib/appwrite";
 import { useAuth } from "@/lib/auth-context";
-import { Habit } from "@/types/database.type";
+import { Habit, HabitCompletion } from "@/types/database.type";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, View, Animated, TouchableOpacity } from "react-native";
 import { ID, Query } from "react-native-appwrite";
@@ -14,6 +14,8 @@ import { useRouter } from "expo-router";
 export default function Index() {
   const { signOut, user } = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [completed, setCompleted] = useState<HabitCompletion[]>([]);
+
   const swipableRefs = useRef<{ [key: string]: Swipeable | null }>({});
   const theme = useTheme();
   const router = useRouter();
@@ -74,7 +76,8 @@ export default function Index() {
     try {
       const today = new Date()
       today.setHours(0,0,0,0)
-      const response = await databases.listDocuments(DATABASE_ID, 
+      const response = await databases.listDocuments(
+        DATABASE_ID, 
         COMPLETIONS_ID, 
         [Query.equal("user_id", user?.$id ?? ""), Query.greaterThanEqual("completed_at", today.toISOString())]);
       setHabits(response.documents as Habit[]);
