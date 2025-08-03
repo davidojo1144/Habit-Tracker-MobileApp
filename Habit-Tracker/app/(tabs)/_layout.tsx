@@ -19,6 +19,7 @@ export default function TabsLayout() {
         name="index" 
         options={{
         title: "Today's Habit",
+        headerShown: false,
         tabBarIcon: ({color, size}) =>   <MaterialCommunityIcons name="calendar-today" size={size} color={color} />}}
         />
       <Tabs.Screen 
