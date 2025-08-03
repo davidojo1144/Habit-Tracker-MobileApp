@@ -29,7 +29,6 @@ export default function StreaksScreen() {
   }, [user]);
 
   useEffect(() => {
-    // Filter habits based on selected filter
     if (filter === "all") {
       setFilteredHabits(habits);
     } else {
@@ -43,7 +42,6 @@ export default function StreaksScreen() {
   }, [habits, filter]);
 
   useEffect(() => {
-    // Initialize animations for filtered habits
     filteredHabits.forEach((habit, index) => {
       if (!fadeAnims[index]) {
         fadeAnims[index] = new Animated.Value(0);
@@ -66,7 +64,7 @@ export default function StreaksScreen() {
         }),
       ]).start();
     });
-    // Cleanup: Reset animations for habits no longer in filteredHabits
+
     fadeAnims.length = filteredHabits.length;
     Object.keys(scaleAnims).forEach((key) => {
       if (!filteredHabits.some((habit) => habit.$id === key)) {
@@ -84,7 +82,6 @@ export default function StreaksScreen() {
       const fetchedHabits = response.documents as Habit[];
       setHabits(fetchedHabits);
       setError("");
-      // Pre-initialize animations
       fetchedHabits.forEach((habit, index) => {
         fadeAnims[index] = new Animated.Value(0);
         scaleAnims[habit.$id] = new Animated.Value(1);
@@ -187,7 +184,6 @@ export default function StreaksScreen() {
           filteredHabits.map((habit, index) => {
             const streakStatus = getStreakStatus(habit);
             const progress = getProgress(habit);
-            // Only render if animations are initialized
             if (!fadeAnims[index] || !scaleAnims[habit.$id]) {
               return null;
             }
