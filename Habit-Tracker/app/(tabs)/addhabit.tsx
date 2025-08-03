@@ -32,7 +32,7 @@ export default function AddHabitScreen(){
                     title,
                     description,
                     frequency,
-                    steak_count: 0,
+                    streak_count: 0,
                     last_completed: new Date().toISOString(),
                     created_at: new Date().toISOString(),
                 }

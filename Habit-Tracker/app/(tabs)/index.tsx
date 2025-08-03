@@ -3,7 +3,7 @@ import { client, DATABASE_ID, databases, HABIT_COLLECTION_ID, RealTimeResponse }
 import { useAuth } from "@/lib/auth-context";
 import { Habit } from "@/types/database.type";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Query } from "react-native-appwrite";
 import { Button } from "react-native-paper";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -17,19 +17,34 @@ export default function Index() {
   const [habits, setHabits] = useState<Habit[]>()
 
   useEffect(() => {
-    fetchHabits()
-
-    const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
-    const HabitsSubscription = client.subscribe(
-      channel,
-      (response: RealTimeResponse) => {
-        if (response.events.includes(
-          "databases.*.collections.*.documents.*.create"
-        )) {
-          fetchHabits()
+    if (user) {
+      const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
+        const HabitsSubscription = client.subscribe(
+          channel,
+          (response: RealTimeResponse) => {
+            if (response.events.includes(
+              "databases.*.collections.*.documents.*.create"
+            )) {
+              fetchHabits()
+            } else if (response.events.includes(
+              "databases.*.collections.*.documents.*.update"
+            )) {
+              fetchHabits()
+            } else if (response.events.includes(
+              "databases.*.collections.*.documents.*.delete"
+            )) {
+              fetchHabits()
+            }
+          }
+        )
+    
+        fetchHabits()
+    
+        return () => {
+          HabitsSubscription()
         }
-      }
-    )
+      
+    }
   }, [user])
 
   const fetchHabits = async () => {
@@ -44,8 +59,10 @@ export default function Index() {
       console.error(error)
     }
   }
+
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View>
         <Text style={styles.headline}>Today's Habits</Text>
       </View>
@@ -81,7 +98,7 @@ export default function Index() {
         onPress={signOut} 
         mode="text" 
         icon={"logout"}>Sign out</Button>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -100,7 +117,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#6b21a8',
     marginTop: hp(3),
-    width: wp(40)
+    width: wp(40),
+    marginBottom: hp(4)
   },
   content: {
     gap: wp(2),
